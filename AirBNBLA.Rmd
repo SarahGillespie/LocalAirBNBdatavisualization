@@ -1,0 +1,59 @@
+---
+title: "AirBNBLA"
+author: "Sarah Gillespie"
+date: "6/5/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Accessed on `r format(Sys.Date(), "%B %e, %Y")`
+
+<center>
+
+##Ramen Ratings
+
+</center>
+
+```{r StartingItems, message=FALSE, warning = FALSE}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(sf)
+library(leaflet)
+library(lwgeom)
+library(lubridate)
+library(RColorBrewer)
+library(ggthemes)
+```
+
+```{r lookAtTheData, message=FALSE, warning = FALSE}
+listings <- read_csv("listings.csv")
+
+smallListingsFULL <- listings %>%
+  select(id, name, host_id, neighbourhood, room_type, price, minimum_nights, number_of_reviews, last_review, reviews_per_month, availability_365)
+
+smallListings <- listings %>%
+  select(id, name, host_id, neighbourhood, room_type, price, minimum_nights, number_of_reviews, last_review, reviews_per_month, availability_365)
+
+smallListings <- smallListings %>%
+  drop_na()
+
+byNeighborhood <- smallListings %>%
+  group_by(neighbourhood)%>%
+  summarise(total_reviews = sum(number_of_reviews), mean_price=mean(price), mean_min=mean(minimum_nights), mean_reviews = mean(number_of_reviews))
+  
+
+#lets look for a price and number of reviews // number of stays per neighborhood and or mean reviews or total reviews
+```
+
+
+```{r plotTheData, message=FALSE, warning = FALSE}
+plot <- ggplot(byNeighborhood, aes(x = mean_reviews, y = mean_price)) +
+  geom_point()
+
+plot
+
+```
