@@ -21,6 +21,7 @@ Accessed on `r format(Sys.Date(), "%B %e, %Y")`
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
+library(ggrepel)
 library(sf)
 library(leaflet)
 library(lwgeom)
@@ -51,9 +52,13 @@ byNeighborhood <- smallListings %>%
 
 
 ```{r plotTheData, message=FALSE, warning = FALSE}
-plot <- ggplot(byNeighborhood, aes(x = mean_reviews, y = mean_price)) +
+plot <- ggplot(byNeighborhood, aes(x = mean_reviews, y = mean_price, color = mean_min)) +
   geom_point()
 
-plot
+plot +
+  geom_text_repel(data = subset(byNeighborhood, mean_price > 375 | mean_reviews > 90), aes(label = neighbourhood)) +
+  theme_hc() +
+  ggtitle("Airbnb in Los Angeles neighborhoods") +
+  labs(y="Mean Price ($)", x = "Mean Reviews")
 
 ```
